@@ -1,0 +1,29 @@
+{
+	"env": {
+	  "myDefaultIncludePath": ["${workspaceFolder}", "${workspaceFolder}/include"],
+	  "myCompilerPath": "/usr/bin/g++"
+	},
+	"configurations": [
+		{
+		  "name": "LINUX",
+		  "includePath": ["${myDefaultIncludePath}", "/usr/include/**"],
+		  "compilerPath": "/usr/bin/g++",
+		  "cppStandard": "gnu++17",
+		  "intelliSenseMode": "gcc-x64",
+		  "compilerArgs": [
+			"-v"
+		  ]
+		},
+		{
+			"name": "WIN32",
+			"includePath": ["C:\\MinGW\\include"],
+			"defines": ["_DEBUG", "PART_TM4C123GH6PM"],
+			"compilerPath": "C:\\MinGW\\bin\\g++.exe",
+			"cStandard": "c99",
+			"cppStandard": "gnu++17",
+			"intelliSenseMode": "gcc-x86",
+			"configurationProvider": "ms-vscode.cmake-tools"
+		}
+	],
+	"version" : 4
+}
