@@ -20,30 +20,8 @@ public:
     sums.assign(2*size, 0ll);
     lazy.assign(2*size, 0ll);
   }
-  void set(ll i, ll v, ll x, ll lx, ll rx){
-    if(lazy[x]){
-      sums[x] += lazy[x];
-      if(2*x+1 < size) lazy[2*x+1] += lazy[x];
-      if(2*x+2 < size) lazy[2*x+2] += lazy[x];
-      lazy[x] = 0;
-    }
-    if(rx-lx==1){
-      sums[x]+=v;
-      return;
-    }
-    ll m = (lx+rx)/2;
-    if(i < m) set(i, v, 2*x+1, lx, m);
-    else set(i, v, 2*x+2, m, rx);
-    sums[x] = sums[2*x+1] + sums[2*x+2];
-  }
-  void set(ll i, ll v){
-    set(i, v, 0, 0, size);
-  }
   void set(ll l, ll r, ll v, ll x, ll lx, ll rx){
-    if(lx >= l && rx <= r){
-      lazy[x]+=v;
-      return;
-    }
+    if(lx >= l && rx <= r){ lazy[x]+=v;return; }
     if(lx >= r || rx <= l) return;
     ll m = (lx+rx)/2;
     set(l, r, v, 2*x+1, lx, m);
@@ -55,10 +33,9 @@ public:
 
   ll sum(ll l, ll r, ll x, ll lx, ll rx){
     if(lazy[x]){
-      cout << 
       sums[x]+=lazy[x];
-      if(2*x+1 < size) lazy[2*x+1] += lazy[x];
-      if(2*x+2 < size) lazy[2*x+2] += lazy[x];
+      if(2*x+1 < 2*size) lazy[2*x+1] += lazy[x];
+      if(2*x+2 < 2*size) lazy[2*x+2] += lazy[x];
       lazy[x] = 0;
     }
     if(rx <= l || lx >= r) return 0;
@@ -84,17 +61,14 @@ void solve(){
     if(a == 1){
       cin >> b >> c >> d;
       segtree.set(b, c, d);
-      // for(ll j = b; j < c; j++){
-      //   segtree.set(j, d);
-      // }
-      for(auto el : segtree.sums) cout << el << " ";
-      cout << endl;
-      for(auto el : segtree.lazy) cout << el << " ";
-      cout << endl;
     } else{
       cin >> b;
       cout << segtree.sum(b, b+1) << endl;
     }
+    // for(auto el : segtree.sums) cout << el << " ";
+    // cout << endl;
+    // for(auto el : segtree.lazy) cout << el << " ";
+    // cout << endl;
   }
 }
 
