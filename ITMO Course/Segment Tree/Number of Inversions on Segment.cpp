@@ -21,25 +21,25 @@ public:
   }
   vector<ll> calcList(vector<ll>& l1, vector<ll>& l2){
     vector<ll> res(41, 0);
-    for(ll i = 1; i < 41; i++) res.at(i) = l1.at(i)+l2[i];
+    for(ll i = 1; i < 41; i++) res[i] = l1[i]+l2[i];
     return res;
   }
   ll calcInv(vector<ll>& l1, vector<ll>& l2, ll i1, ll i2){
     ll res = i1+i2;
 
     ll size1 = 0;
-    for(auto el : l1) size += el;
-
+    for(auto el : l1) size1 += el;
+    dbg(size1);
     for(ll i = 1; i < 41; i++){
-      size -= l1[i];
-      res += l2[i] * size;
+      size1 -= l1[i];
+      res += l2[i] * size1;
     }
     return res;
   }
 
   void set(ll i, ll v, ll x, ll lx, ll rx){
     if(rx-lx==1){
-      list[x].clear();
+      list[x].assign(41, 0ll);
       list[x][v] = 1;
       return;
     }
@@ -54,11 +54,11 @@ public:
   }
   pair<ll, vector<ll>> inversion(ll l, ll r, ll x, ll lx, ll rx){
     if(lx >= l && rx <= r) return {inv[x], list[x]};
-    if(lx >= r || rx <= l) return {0, list[x]};
+    if(lx >= r || rx <= l) return {0, vector<ll>(41, 0ll)};
     ll m = (lx+rx)/2;
     pair<ll, vector<ll>> inv1 = inversion(l, r, 2*x+1, lx, m);
     pair<ll, vector<ll>> inv2 = inversion(l, r, 2*x+2, m, rx);
-    return {calcInv(inv1.second, inv2.second, inv1.first, inv2.first), list[x]};
+    return {calcInv(inv1.second, inv2.second, inv1.first, inv2.first), calcList(inv1.second, inv2.second)};
   }
   ll inversion(ll l, ll r){
     return inversion(l, r, 0, 0, size).first;
@@ -72,6 +72,8 @@ void solve(){
   for(auto &el : list) cin >> el;
   Segtree segtree(n);
   for(ll i = 0; i < n; i++) segtree.set(i, list[i]);
+  for(auto el : segtree.inv) cout << el << " ";
+  cout << endl;
   ll a,b,c;
   for(ll i = 0; i < q; i++){
     cin >> a >> b >> c;

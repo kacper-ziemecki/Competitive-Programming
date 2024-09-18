@@ -9,15 +9,25 @@ template<typename Head, typename... Tail> void dbg_out(Head H, Tail... T) { cout
 #define dbg(...) cout << "(" << #__VA_ARGS__ << "):", dbg_out(__VA_ARGS__)
 
 ll MOD;
+map< pair<ll, ll>, vector<ll> > mp;
 
 class Segtree{
 public:
   ll size;
   vector<vector<ll>> products;
-  Segtree(ll n){
+  void init(ll x, ll lx, ll rx){
+    if(rx-lx==1) return;
+    ll m = (lx+rx)/2;
+    init(2*x+1, lx, m);
+    init(2*x+2, m, rx);
+    products[x] = calc(products[2*x+1], products[2*x+2]);
+  }
+  Segtree(vector<vector<ll>> &list){
     size = 1;
-    while(size < n) size <<= 1;
+    while(size < list.size()) size <<= 1;
     products.assign(2*size, vector<ll>(4, 0ll));
+    for(ll i = size-1; i < size+list.size()-1; i++) products[i] = list[i-(size-1)];
+    init(0, 0, size);
   }
   vector<ll> calc(vector<ll> &l1, vector<ll> &l2){
     vector<ll> res(4, 0);
@@ -28,19 +38,6 @@ public:
     return res;
   }
 
-  void set(ll i, vector<ll> &v, ll x, ll lx, ll rx){
-    if(rx-lx==1){
-      products[x] = v;
-      return;
-    }
-    ll m = (lx+rx)/2;
-    if(i < m) set(i, v, 2*x+1, lx, m);
-    else set(i, v, 2*x+2, m, rx);
-    products[x] = calc(products[2*x+1], products[2*x+2]);
-  }
-  void set(ll i, vector<ll> v){
-    set(i, v, 0, 0, size);
-  }
   vector<ll> product(ll l, ll r, ll x, ll lx, ll rx){
     if(lx >= l && rx <= r) return products[x];
     if(rx <= l || lx >= r) return {1, 0, 0, 1};
@@ -58,16 +55,17 @@ void solve(){
   ll n,m, left, right;
   cin >> MOD >> n >> m;
   vector<vector<ll>> list(n, vector<ll>(4, 0ll));
+  vector<ll> tmp;
   for(auto &sub : list){
     for(auto &el : sub) cin >> el;
   }
-  Segtree segtree(n);
-  for(ll i = 0; i < n; i++) segtree.set(i, list[i]);
+  Segtree segtree(list);
   for(ll i = 0; i < m; i++){
     cin >> left >> right;
-    vector<ll> tmp = segtree.product(left-1, right);
+    if(!mp[{left,right}].empty()){ tmp = mp[{left,right}];}
+    else{ tmp = segtree.product(left-1, right); mp[{left,right}]=tmp;}
     for(ll i = 0; i < 4; i++){
-      cout << tmp[i] % MOD << " ";
+      cout << tmp[i] << " ";
       if(i == 1 || i == 3) cout << endl;
     }
     cout << endl;
